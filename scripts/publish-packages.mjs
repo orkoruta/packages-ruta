@@ -23,7 +23,7 @@ for (const packageDir of packageDirs) {
     console.log(`${spec} not found; publishing.`);
   }
 
-  execFileSync('pnpm', ['publish', '--no-git-checks'], {
+  execFileSync('npm', ['publish'], {
     cwd,
     stdio: 'inherit',
   });
