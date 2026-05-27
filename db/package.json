@@ -1,0 +1,29 @@
+{
+  "name": "@orkoruta/db",
+  "version": "1.0.0",
+  "description": "Cliente Prisma y helpers de tenant para RUTA",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "prisma"
+  ],
+  "scripts": {
+    "build": "(rm -rf dist || true) && tsc && mkdir -p dist/generated && cp -R src/generated/prisma-client dist/generated/",
+    "typecheck": "tsc --noEmit",
+    "generate": "prisma generate",
+    "pull": "prisma db pull"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "prisma": "^5.18.0",
+    "typescript": "^5.5.0"
+  }
+}
