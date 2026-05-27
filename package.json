@@ -1,0 +1,16 @@
+{
+  "name": "@orkoruta/shared-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "pnpm --filter @orkoruta/db generate && pnpm --filter @orkoruta/shared build && pnpm --filter @orkoruta/db build",
+    "ci": "pnpm generate && pnpm typecheck && pnpm test && pnpm build",
+    "generate": "pnpm --filter @orkoruta/db generate",
+    "publish:shared": "pnpm --filter @orkoruta/shared publish",
+    "publish:db": "pnpm --filter @orkoruta/db publish",
+    "publish:packages": "node scripts/publish-packages.mjs",
+    "test": "pnpm --filter @orkoruta/shared test",
+    "typecheck": "pnpm --filter @orkoruta/shared typecheck && pnpm --filter @orkoruta/db typecheck",
+    "lint": "pnpm --filter @orkoruta/shared lint"
+  }
+}

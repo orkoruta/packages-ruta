@@ -1,0 +1,736 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma-client"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["ruta"]
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model audit_events {
+  id                      BigInt   @default(autoincrement())
+  client_id               BigInt
+  actor_user_id           BigInt?
+  actor_api_key_id        BigInt?
+  actor_type              String?
+  actor_role              String?
+  acting_via_control_view Boolean  @default(false)
+  impersonator_user_id    BigInt?
+  control_view_session_id BigInt?
+  action                  String
+  entity_type             String
+  entity_id               BigInt?
+  ip_address              String?  @db.Inet
+  user_agent              String?
+  metadata                Json?
+  result                  String
+  occurred_at             DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id([id, client_id])
+  @@index([client_id, entity_type, entity_id], map: "idx_audit_client_entity")
+  @@index([client_id, occurred_at(sort: Desc)], map: "idx_audit_client_occurred_desc")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model buyer_profiles {
+  user_id                     BigInt
+  client_id                   BigInt
+  default_address_line        String?
+  default_address_city        String?
+  default_address_state       String?
+  default_address_country     String?
+  default_address_postal_code String?
+  default_address_latitude    Decimal? @db.Decimal(10, 7)
+  default_address_longitude   Decimal? @db.Decimal(10, 7)
+  buyer_type                  String   @default("INDIVIDUAL")
+  corporate_name              String?
+  corporate_tax_id            String?
+  created_at                  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime @default(now()) @db.Timestamptz(6)
+  users                       users    @relation(fields: [user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_bp_user")
+
+  @@id([user_id, client_id])
+  @@schema("ruta")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model client_api_keys {
+  id                 BigInt    @id @default(autoincrement())
+  client_id          BigInt
+  key_id             String    @unique
+  secret_hash        String
+  scopes             String[]
+  name               String?
+  last_used_at       DateTime? @db.Timestamptz(6)
+  last_used_ip       String?   @db.Inet
+  expires_at         DateTime? @db.Timestamptz(6)
+  revoked_at         DateTime? @db.Timestamptz(6)
+  revocation_reason  String?
+  created_by_user_id BigInt?
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  clients            clients   @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cak_client")
+
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model client_parameters {
+  id                        BigInt   @default(autoincrement())
+  client_id                 BigInt
+  parameter_key             String
+  parameter_value           String
+  value_type                String
+  description               String?
+  is_overrideable_by_client Boolean  @default(true)
+  created_at                DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime @default(now()) @db.Timestamptz(6)
+  clients                   clients  @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cparam_client")
+
+  @@id([id, client_id])
+  @@unique([client_id, parameter_key])
+  @@index([client_id, parameter_key], map: "idx_cparam_client_key")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model client_payment_providers {
+  id                         BigInt                 @default(autoincrement())
+  client_id                  BigInt
+  provider_type              String
+  provider_name              String
+  display_name               String?
+  config                     Json                   @default("{}")
+  webhook_ingress_path       String?
+  webhook_secret             String?
+  status                     String                 @default("ACTIVE")
+  is_default                 Boolean                @default(false)
+  applicable_payment_methods String[]
+  created_at                 DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime               @default(now()) @db.Timestamptz(6)
+  clients                    clients                @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cpp_client")
+  orders                     orders[]
+  payments                   payments[]
+  recurrence_templates       recurrence_templates[]
+
+  @@id([id, client_id])
+  @@index([client_id, status], map: "idx_cpp_client_status")
+  @@schema("ruta")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model clients {
+  id                             BigInt                     @id @default(autoincrement())
+  business_code                  String                     @unique
+  slug                           String                     @unique
+  name                           String
+  description                    String?
+  contact_person_name            String?
+  contact_person_document_type   String?
+  contact_person_document_number String?
+  contact_person_phone           String?
+  contact_person_email           String?
+  logo_url                       String?
+  client_type                    String
+  frontend_mode                  String?
+  status                         String                     @default("ACTIVE")
+  created_at                     DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                   @default(now()) @db.Timestamptz(6)
+  client_api_keys                client_api_keys[]
+  client_parameters              client_parameters[]
+  client_payment_providers       client_payment_providers[]
+  control_view_sessions          control_view_sessions[]
+  orders                         orders[]
+  pickup_points                  pickup_points[]
+  product_categories             product_categories[]
+  products                       products[]
+  recurrence_templates           recurrence_templates[]
+  users                          users[]
+  webhook_subscriptions          webhook_subscriptions[]
+
+  @@index([status], map: "idx_clients_status")
+  @@index([client_type], map: "idx_clients_type")
+  @@schema("ruta")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model control_view_master_passwords {
+  user_id              BigInt
+  client_id            BigInt    @default(0)
+  master_password_hash String
+  can_use_control_view Boolean   @default(false)
+  set_at               DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at           DateTime? @db.Timestamptz(6)
+  users                users     @relation(fields: [user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cvmp_user")
+
+  @@id([user_id, client_id])
+  @@schema("ruta")
+}
+
+model control_view_sessions {
+  id                     BigInt     @id @default(autoincrement())
+  admin_ruta_user_id     BigInt
+  impersonated_client_id BigInt
+  started_at             DateTime   @default(now()) @db.Timestamptz(6)
+  ended_at               DateTime?  @db.Timestamptz(6)
+  reason                 String?
+  ip_address             String?    @db.Inet
+  user_agent             String?
+  clients                clients    @relation(fields: [impersonated_client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cvs_client")
+  sessions               sessions[]
+
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model courier_profiles {
+  user_id          BigInt
+  client_id        BigInt
+  transport_method String?
+  vehicle_plate    String?
+  additional_data  Json?
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+  users            users    @relation(fields: [user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cp_user")
+
+  @@id([user_id, client_id])
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model disputes {
+  id                                                  BigInt    @default(autoincrement())
+  client_id                                           BigInt
+  order_id                                            BigInt
+  buyer_id                                            BigInt
+  status                                              String    @default("DISPUTED")
+  reason                                              String?
+  resolution                                          String?
+  resolution_action                                   String?
+  resolved_by_user_id                                 BigInt?
+  resolved_at                                         DateTime? @db.Timestamptz(6)
+  evidence                                            Json?
+  created_at                                          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                                          DateTime  @default(now()) @db.Timestamptz(6)
+  users_disputes_buyer_id_client_idTousers            users     @relation("disputes_buyer_id_client_idTousers", fields: [buyer_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_disputes_buyer")
+  orders                                              orders    @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_disputes_order")
+  users_disputes_resolved_by_user_id_client_idTousers users?    @relation("disputes_resolved_by_user_id_client_idTousers", fields: [resolved_by_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_disputes_resolver")
+
+  @@id([id, client_id])
+  @@index([client_id, order_id], map: "idx_disputes_client_order")
+  @@index([client_id, status], map: "idx_disputes_client_status")
+  @@schema("ruta")
+}
+
+model external_webhook_events {
+  id                  BigInt    @id @default(autoincrement())
+  client_id           BigInt
+  payment_provider_id BigInt
+  provider_event_id   String
+  payload             Json
+  signature_valid     Boolean?
+  processed_at        DateTime? @db.Timestamptz(6)
+  processing_result   String?
+  related_order_id    BigInt?
+  received_at         DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@unique([payment_provider_id, provider_event_id])
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model idempotency_keys {
+  id              BigInt   @default(autoincrement())
+  client_id       BigInt
+  actor_id        BigInt
+  actor_type      String
+  idempotency_key String
+  request_hash    String
+  response_status Int
+  response_body   Json?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  expires_at      DateTime @default(dbgenerated("(now() + '24:00:00'::interval)")) @db.Timestamptz(6)
+
+  @@id([id, client_id])
+  @@unique([client_id, actor_type, actor_id, idempotency_key])
+  @@index([expires_at], map: "idx_idem_expires")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model operator_permissions {
+  operator_user_id                                               BigInt
+  client_id                                                      BigInt
+  permission_key                                                 String
+  granted_at                                                     DateTime @default(now()) @db.Timestamptz(6)
+  granted_by_user_id                                             BigInt
+  users_operator_permissions_granted_by_user_id_client_idTousers users    @relation("operator_permissions_granted_by_user_id_client_idTousers", fields: [granted_by_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_op_granter")
+  users_operator_permissions_operator_user_id_client_idTousers   users    @relation("operator_permissions_operator_user_id_client_idTousers", fields: [operator_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_op_user")
+
+  @@id([operator_user_id, client_id, permission_key])
+  @@index([client_id, operator_user_id], map: "idx_op_perm_user")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model order_items {
+  id           BigInt    @default(autoincrement())
+  client_id    BigInt
+  order_id     BigInt
+  product_id   BigInt?
+  product_name String
+  sku          String?
+  quantity     Int
+  unit_price   Decimal   @db.Decimal(12, 2)
+  subtotal     Decimal   @db.Decimal(12, 2)
+  metadata     Json?
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  orders       orders    @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_oi_order")
+  products     products? @relation(fields: [product_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_oi_product")
+
+  @@id([id, client_id])
+  @@index([client_id, order_id], map: "idx_oi_client_order")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model order_state_history {
+  id                    BigInt   @default(autoincrement())
+  client_id             BigInt
+  order_id              BigInt
+  state_dimension       String
+  previous_value        String?
+  new_value             String
+  changed_by_user_id    BigInt?
+  changed_by_actor_type String?
+  reason                String?
+  metadata              Json?
+  occurred_at           DateTime @default(now()) @db.Timestamptz(6)
+  orders                orders   @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_osh_order")
+
+  @@id([id, client_id])
+  @@index([client_id, state_dimension, occurred_at(sort: Desc)], map: "idx_osh_client_dimension")
+  @@index([client_id, order_id, occurred_at(sort: Desc)], map: "idx_osh_client_order_occurred")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model orders {
+  id                                            BigInt                    @default(autoincrement())
+  client_id                                     BigInt
+  buyer_id                                      BigInt
+  courier_user_id                               BigInt?
+  order_origin                                  String
+  order_status                                  String
+  payment_status                                String
+  refund_status                                 String                    @default("REFUND_NOT_REQUIRED")
+  return_status                                 String?
+  dispute_status                                String?
+  delivery_type                                 String
+  delivery_carrier_type                         String?
+  payment_method                                String
+  payment_method_submethod                      String?
+  refund_modality                               String?
+  return_mechanism                              String?
+  buyer_type                                    String                    @default("INDIVIDUAL")
+  closure_reason                                String?
+  payment_provider_id                           BigInt?
+  external_payment_reference                    String?
+  recurrence_template_id                        BigInt?
+  delivery_address_line                         String?
+  delivery_address_city                         String?
+  delivery_address_state                        String?
+  delivery_address_country                      String?
+  delivery_address_postal_code                  String?
+  delivery_address_latitude                     Decimal?                  @db.Decimal(10, 7)
+  delivery_address_longitude                    Decimal?                  @db.Decimal(10, 7)
+  delivery_instructions                         String?
+  pickup_point_id                               BigInt?
+  subtotal                                      Decimal                   @default(0) @db.Decimal(12, 2)
+  tax                                           Decimal                   @default(0) @db.Decimal(12, 2)
+  shipping_fee                                  Decimal                   @default(0) @db.Decimal(12, 2)
+  discount                                      Decimal                   @default(0) @db.Decimal(12, 2)
+  total                                         Decimal                   @default(0) @db.Decimal(12, 2)
+  currency                                      String                    @default("COP")
+  version                                       BigInt                    @default(1)
+  created_at                                    DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                                    DateTime                  @default(now()) @db.Timestamptz(6)
+  submitted_at                                  DateTime?                 @db.Timestamptz(6)
+  delivered_at                                  DateTime?                 @db.Timestamptz(6)
+  closed_at                                     DateTime?                 @db.Timestamptz(6)
+  archived                                      Boolean                   @default(false)
+  archived_at                                   DateTime?                 @db.Timestamptz(6)
+  disputes                                      disputes[]
+  order_items                                   order_items[]
+  order_state_history                           order_state_history[]
+  users_orders_buyer_id_client_idTousers        users                     @relation("orders_buyer_id_client_idTousers", fields: [buyer_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_buyer")
+  clients                                       clients                   @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_client")
+  users_orders_courier_user_id_client_idTousers users?                    @relation("orders_courier_user_id_client_idTousers", fields: [courier_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_courier")
+  client_payment_providers                      client_payment_providers? @relation(fields: [payment_provider_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_payment_provider")
+  pickup_points                                 pickup_points?            @relation(fields: [pickup_point_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_pickup_point")
+  recurrence_templates                          recurrence_templates?     @relation(fields: [recurrence_template_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_orders_recurrence")
+  payments                                      payments[]
+  refunds                                       refunds[]
+  returns                                       returns[]
+
+  @@id([id, client_id])
+  @@index([client_id, buyer_id, order_status], map: "idx_orders_client_buyer_status")
+  @@index([client_id, created_at(sort: Desc)], map: "idx_orders_client_created_desc")
+  @@index([client_id, delivery_type], map: "idx_orders_client_delivery_type")
+  @@index([client_id, order_origin], map: "idx_orders_client_origin")
+  @@index([client_id, payment_status], map: "idx_orders_client_payment_status")
+  @@index([client_id, order_status], map: "idx_orders_client_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model payments {
+  id                           BigInt                    @default(autoincrement())
+  client_id                    BigInt
+  order_id                     BigInt
+  payment_provider_id          BigInt?
+  payment_method               String
+  payment_method_submethod     String?
+  amount                       Decimal                   @db.Decimal(12, 2)
+  currency                     String                    @default("COP")
+  status                       String
+  external_transaction_id      String?
+  external_payment_reference   String?
+  technical_confirmation_at    DateTime?                 @db.Timestamptz(6)
+  collected_by_courier_user_id BigInt?
+  collected_at                 DateTime?                 @db.Timestamptz(6)
+  collection_evidence          Json?
+  reconciled_with_client       Boolean                   @default(false)
+  reconciled_at                DateTime?                 @db.Timestamptz(6)
+  metadata                     Json?
+  created_at                   DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at                   DateTime                  @default(now()) @db.Timestamptz(6)
+  users                        users?                    @relation(fields: [collected_by_courier_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_payments_courier")
+  orders                       orders                    @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_payments_order")
+  client_payment_providers     client_payment_providers? @relation(fields: [payment_provider_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_payments_provider")
+  refunds                      refunds[]
+
+  @@id([id, client_id])
+  @@index([client_id, order_id], map: "idx_payments_client_order")
+  @@index([client_id, reconciled_with_client], map: "idx_payments_client_reconciled")
+  @@index([client_id, status], map: "idx_payments_client_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model pickup_points {
+  id                   BigInt                 @default(autoincrement())
+  client_id            BigInt
+  name                 String
+  address_line         String
+  city                 String?
+  state                String?
+  country              String?
+  postal_code          String?
+  latitude             Decimal?               @db.Decimal(10, 7)
+  longitude            Decimal?               @db.Decimal(10, 7)
+  opening_hours        Json?
+  contact_phone        String?
+  status               String                 @default("ACTIVE")
+  created_at           DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime               @default(now()) @db.Timestamptz(6)
+  orders               orders[]
+  clients              clients                @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_pp_client")
+  recurrence_templates recurrence_templates[]
+
+  @@id([id, client_id])
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model product_categories {
+  id                 BigInt   @default(autoincrement())
+  client_id          BigInt
+  name               String
+  parent_category_id BigInt?
+  display_order      Int?
+  status             String   @default("ACTIVE")
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime @default(now()) @db.Timestamptz(6)
+  clients            clients  @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_pc_client")
+
+  @@id([id, client_id])
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model products {
+  id             BigInt        @default(autoincrement())
+  client_id      BigInt
+  sku            String?
+  name           String
+  description    String?
+  product_type   String        @default("VENTA_NORMAL")
+  unit_price     Decimal       @db.Decimal(12, 2)
+  currency       String        @default("COP")
+  category_id    BigInt?
+  image_url      String?
+  status         String        @default("ACTIVE")
+  stock_quantity Int?
+  metadata       Json?
+  created_at     DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime      @default(now()) @db.Timestamptz(6)
+  order_items    order_items[]
+  clients        clients       @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_products_client")
+
+  @@id([id, client_id])
+  @@unique([client_id, sku])
+  @@index([client_id, status], map: "idx_products_client_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model recurrence_templates {
+  id                       BigInt                    @default(autoincrement())
+  client_id                BigInt
+  buyer_id                 BigInt
+  recurrence_mode          String
+  recurrence_periodicity   String?
+  custom_interval_days     Int?
+  recurrence_status        String                    @default("RECURRENCE_ACTIVE")
+  delivery_type            String
+  delivery_carrier_type    String?
+  payment_method           String
+  payment_method_submethod String?
+  payment_provider_id      BigInt?
+  pickup_point_id          BigInt?
+  template_payload         Json
+  last_generated_at        DateTime?                 @db.Timestamptz(6)
+  next_generation_at       DateTime?                 @db.Timestamptz(6)
+  created_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                  @default(now()) @db.Timestamptz(6)
+  orders                   orders[]
+  users                    users                     @relation(fields: [buyer_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rt_buyer")
+  clients                  clients                   @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rt_client")
+  client_payment_providers client_payment_providers? @relation(fields: [payment_provider_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rt_payment_provider")
+  pickup_points            pickup_points?            @relation(fields: [pickup_point_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rt_pickup_point")
+
+  @@id([id, client_id])
+  @@index([client_id, recurrence_status], map: "idx_rt_client_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model refunds {
+  id                          BigInt    @default(autoincrement())
+  client_id                   BigInt
+  order_id                    BigInt
+  payment_id                  BigInt?
+  refund_modality             String
+  amount                      Decimal   @db.Decimal(12, 2)
+  currency                    String    @default("COP")
+  status                      String
+  executed_by_user_id         BigInt?
+  executed_at                 DateTime? @db.Timestamptz(6)
+  external_provider_refund_id String?
+  evidence                    Json?
+  reason                      String?
+  metadata                    Json?
+  created_at                  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime  @default(now()) @db.Timestamptz(6)
+  users                       users?    @relation(fields: [executed_by_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_refunds_executor")
+  orders                      orders    @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_refunds_order")
+  payments                    payments? @relation(fields: [payment_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_refunds_payment")
+
+  @@id([id, client_id])
+  @@index([client_id, order_id], map: "idx_refunds_client_order")
+  @@index([client_id, status], map: "idx_refunds_client_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model returns {
+  id                                                    BigInt    @default(autoincrement())
+  client_id                                             BigInt
+  order_id                                              BigInt
+  buyer_id                                              BigInt
+  status                                                String
+  return_mechanism                                      String?
+  reason                                                String?
+  buyer_complaint                                       String?
+  pickup_courier_user_id                                BigInt?
+  requested_at                                          DateTime  @default(now()) @db.Timestamptz(6)
+  reviewed_at                                           DateTime? @db.Timestamptz(6)
+  approved_at                                           DateTime? @db.Timestamptz(6)
+  received_at                                           DateTime? @db.Timestamptz(6)
+  closed_at                                             DateTime? @db.Timestamptz(6)
+  evidence                                              Json?
+  metadata                                              Json?
+  created_at                                            DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                                            DateTime  @default(now()) @db.Timestamptz(6)
+  users_returns_buyer_id_client_idTousers               users     @relation("returns_buyer_id_client_idTousers", fields: [buyer_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_returns_buyer")
+  users_returns_pickup_courier_user_id_client_idTousers users?    @relation("returns_pickup_courier_user_id_client_idTousers", fields: [pickup_courier_user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_returns_courier")
+  orders                                                orders    @relation(fields: [order_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_returns_order")
+
+  @@id([id, client_id])
+  @@index([client_id, buyer_id], map: "idx_returns_client_buyer")
+  @@index([client_id, order_id], map: "idx_returns_client_order")
+  @@index([client_id, status], map: "idx_returns_client_status")
+  @@schema("ruta")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sessions {
+  id                      BigInt                 @id @default(autoincrement())
+  client_id               BigInt
+  user_id                 BigInt
+  refresh_token_hash      String
+  control_view_session_id BigInt?
+  ip_address              String?                @db.Inet
+  user_agent              String?
+  issued_at               DateTime               @default(now()) @db.Timestamptz(6)
+  last_used_at            DateTime               @default(now()) @db.Timestamptz(6)
+  expires_at              DateTime               @db.Timestamptz(6)
+  revoked_at              DateTime?              @db.Timestamptz(6)
+  revocation_reason       String?
+  control_view_sessions   control_view_sessions? @relation(fields: [control_view_session_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sessions_cvs")
+  users                   users                  @relation(fields: [user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sessions_user")
+
+  @@schema("ruta")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model state_catalog {
+  state_dimension        String
+  state_value            String
+  description            String?
+  is_terminal            Boolean @default(false)
+  display_order          Int?
+  applies_to_client_type String  @default("BOTH")
+
+  @@id([state_dimension, state_value])
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id                                                                            BigInt                         @default(autoincrement())
+  client_id                                                                     BigInt
+  user_type                                                                     String
+  email                                                                         String
+  password_hash                                                                 String?
+  auth_mode                                                                     String                         @default("PASSWORD")
+  external_buyer_id                                                             String?
+  full_name                                                                     String?
+  document_type                                                                 String?
+  document_number                                                               String?
+  phone                                                                         String?
+  status                                                                        String                         @default("ACTIVE")
+  last_login_at                                                                 DateTime?                      @db.Timestamptz(6)
+  password_changed_at                                                           DateTime?                      @default(now()) @db.Timestamptz(6)
+  created_at                                                                    DateTime                       @default(now()) @db.Timestamptz(6)
+  updated_at                                                                    DateTime                       @default(now()) @db.Timestamptz(6)
+  buyer_profiles                                                                buyer_profiles?
+  control_view_master_passwords                                                 control_view_master_passwords?
+  courier_profiles                                                              courier_profiles?
+  disputes_disputes_buyer_id_client_idTousers                                   disputes[]                     @relation("disputes_buyer_id_client_idTousers")
+  disputes_disputes_resolved_by_user_id_client_idTousers                        disputes[]                     @relation("disputes_resolved_by_user_id_client_idTousers")
+  operator_permissions_operator_permissions_granted_by_user_id_client_idTousers operator_permissions[]         @relation("operator_permissions_granted_by_user_id_client_idTousers")
+  operator_permissions_operator_permissions_operator_user_id_client_idTousers   operator_permissions[]         @relation("operator_permissions_operator_user_id_client_idTousers")
+  orders_orders_buyer_id_client_idTousers                                       orders[]                       @relation("orders_buyer_id_client_idTousers")
+  orders_orders_courier_user_id_client_idTousers                                orders[]                       @relation("orders_courier_user_id_client_idTousers")
+  payments                                                                      payments[]
+  recurrence_templates                                                          recurrence_templates[]
+  refunds                                                                       refunds[]
+  returns_returns_buyer_id_client_idTousers                                     returns[]                      @relation("returns_buyer_id_client_idTousers")
+  returns_returns_pickup_courier_user_id_client_idTousers                       returns[]                      @relation("returns_pickup_courier_user_id_client_idTousers")
+  sessions                                                                      sessions[]
+  clients                                                                       clients                        @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_client")
+
+  @@id([id, client_id])
+  @@unique([client_id, email])
+  @@unique([client_id, external_buyer_id])
+  @@index([client_id, email], map: "idx_users_client_email")
+  @@index([client_id, user_type, status], map: "idx_users_client_type_status")
+  @@schema("ruta")
+}
+
+/// This table is a partition table and requires additional setup for migrations. Visit https://pris.ly/d/partition-tables for more info.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model webhook_deliveries {
+  id                    BigInt                @default(autoincrement())
+  client_id             BigInt
+  subscription_id       BigInt
+  event_type            String
+  event_id              String
+  payload               Json
+  attempt_number        Int                   @default(1)
+  response_status       Int?
+  response_body         String?
+  delivered_at          DateTime?             @db.Timestamptz(6)
+  next_retry_at         DateTime?             @db.Timestamptz(6)
+  failed_permanently    Boolean               @default(false)
+  created_at            DateTime              @default(now()) @db.Timestamptz(6)
+  webhook_subscriptions webhook_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_wd_subscription")
+
+  @@id([id, client_id])
+  @@index([client_id, subscription_id], map: "idx_wd_client_subscription")
+  @@schema("ruta")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model webhook_subscriptions {
+  id                 BigInt               @id @default(autoincrement())
+  client_id          BigInt
+  url                String
+  events             String[]
+  signing_secret     String
+  status             String               @default("ACTIVE")
+  description        String?
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  webhook_deliveries webhook_deliveries[]
+  clients            clients              @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_ws_client")
+
+  @@schema("ruta")
+}
