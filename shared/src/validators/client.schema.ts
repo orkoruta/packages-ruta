@@ -23,3 +23,14 @@ export const clientSlugParamsSchema = z.object({
 });
 
 export const clientTypeSchema = z.nativeEnum(ClientType);
+
+export const clientListQuerySchema = z.object({
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'ARCHIVED']).optional(),
+  client_type: z.nativeEnum(ClientType).optional(),
+  q: z.string().trim().min(1).max(120).optional(),
+  page: z.coerce.number().int().positive().default(1),
+  page_size: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+export type UpdateClientInput = z.infer<typeof updateClientSchema>;
+export type ClientListQuery = z.infer<typeof clientListQuerySchema>;

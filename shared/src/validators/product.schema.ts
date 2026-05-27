@@ -18,3 +18,6 @@ export const productListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   page_size: z.coerce.number().int().min(1).max(100).default(20),
 });
+
+export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+export type ProductListQuery = z.infer<typeof productListQuerySchema>;

@@ -11,3 +11,13 @@ export const updateBuyerProfileSchema = z.object({
 export const buyerIdParamsSchema = z.object({
   buyer_user_id: z.coerce.number().int().positive(),
 });
+
+export const buyerListQuerySchema = z.object({
+  q: z.string().trim().min(1).max(120).optional(),
+  status: z.enum(['ACTIVE', 'SUSPENDED', 'ARCHIVED']).optional(),
+  page: z.coerce.number().int().positive().default(1),
+  page_size: z.coerce.number().int().min(1).max(100).default(20),
+});
+
+export type UpdateBuyerProfileInput = z.infer<typeof updateBuyerProfileSchema>;
+export type BuyerListQuery = z.infer<typeof buyerListQuerySchema>;
