@@ -26,6 +26,7 @@ export type CancelOrderInput = z.infer<typeof cancelOrderSchema>;
 export type RequestCancelInput = z.infer<typeof requestCancelSchema>;
 export type OrderTransitionInput = z.infer<typeof orderTransitionSchema>;
 export type AssignCourierInput = z.infer<typeof assignCourierSchema>;
+// RecordCollectionInput vive en payment.types.ts (interface existente)
 
 // --- Tipos de respuesta y modelos internos ---
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { OrderStatus, PaymentStatus, RefundStatus, ReturnStatus, DisputeStatus } from '../enums/index.js';
+import { OrderStatus, PaymentStatus, RefundStatus, ReturnStatus, DisputeStatus, PaymentMethodSubmethod } from '../enums/index.js';
 
 export const orderTransitionSchema = z.object({
   to_state: z.nativeEnum(OrderStatus),
@@ -44,4 +44,13 @@ export const cancelOrderSchema = z.object({
 
 export const requestCancelSchema = z.object({
   reason: z.string().min(1, 'La razón de la solicitud de cancelación es requerida'),
+});
+
+export const recordCollectionSchema = z.object({
+  amount: z.number().positive('El monto debe ser mayor a cero'),
+  currency: z.string().length(3).default('COP'),
+  method: z.enum(['CASH', 'ELECTRONIC']),
+  electronic_submethod: z.nativeEnum(PaymentMethodSubmethod).optional(),
+  external_txn_id: z.string().max(255).optional(),
+  notes: z.string().max(500).optional(),
 });
