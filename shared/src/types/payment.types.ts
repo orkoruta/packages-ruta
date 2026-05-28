@@ -1,9 +1,5 @@
 import { PaymentStatus, PaymentMethod, PaymentMethodSubmethod, RefundStatus, RefundModality } from '../enums/index.js';
 
-export interface InitiatePaymentInput {
-  order_id: number;
-}
-
 export interface InitiatePaymentResponse {
   order_id: number;
   payment_status: PaymentStatus;
