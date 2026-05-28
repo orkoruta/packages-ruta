@@ -1,6 +1,33 @@
-import { OrderStatus, DeliveryType, DeliveryCarrierType, PaymentStatus, RefundStatus, ReturnStatus, DisputeStatus, ClosureReason } from '../enums/index.js';
+import { z } from 'zod';
+import {
+  OrderStatus,
+  DeliveryType,
+  DeliveryCarrierType,
+  PaymentStatus,
+  RefundStatus,
+  ReturnStatus,
+  DisputeStatus,
+  ClosureReason,
+} from '../enums/index.js';
+import {
+  createOrderSchema,
+  confirmOrderSchema,
+  cancelOrderSchema,
+  requestCancelSchema,
+  orderTransitionSchema,
+  assignCourierSchema,
+} from '../validators/order.schema.js';
 
-// --- Order Types ---
+// --- Tipos derivados de schemas Zod (requests) ---
+
+export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+export type ConfirmOrderInput = z.infer<typeof confirmOrderSchema>;
+export type CancelOrderInput = z.infer<typeof cancelOrderSchema>;
+export type RequestCancelInput = z.infer<typeof requestCancelSchema>;
+export type OrderTransitionInput = z.infer<typeof orderTransitionSchema>;
+export type AssignCourierInput = z.infer<typeof assignCourierSchema>;
+
+// --- Tipos de respuesta y modelos internos ---
 
 export interface OrderItem {
   product_id: number;
@@ -20,32 +47,6 @@ export interface DeliveryAddress {
   latitude?: number;
   longitude?: number;
   instructions?: string;
-}
-
-export interface CreateOrderInput {
-  items: OrderItem[];
-}
-
-export interface ConfirmOrderInput {
-  delivery_type: DeliveryType;
-  delivery_address?: DeliveryAddress;
-  pickup_point_id?: number;
-  payment_method: string;
-  payment_method_submethod?: string;
-}
-
-export interface OrderTransitionInput {
-  to_state: OrderStatus;
-  reason?: string;
-  dimension: 'order_status' | 'payment_status' | 'refund_status' | 'return_status' | 'dispute_status';
-}
-
-export interface AssignCourierInput {
-  courier_user_id: number;
-}
-
-export interface CancelOrderInput {
-  reason: string;
 }
 
 export interface OrderStateHistory {

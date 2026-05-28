@@ -41,3 +41,7 @@ export const assignCourierSchema = z.object({
 export const cancelOrderSchema = z.object({
   reason: z.string().min(1, 'La razón de cancelación es requerida'),
 });
+
+export const requestCancelSchema = z.object({
+  reason: z.string().min(1, 'La razón de la solicitud de cancelación es requerida'),
+});

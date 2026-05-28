@@ -1,4 +1,5 @@
 export * from './order.schema.js';
+export * from './payment.schema.js';
 export * from './user.schema.js';
 export * from './auth.schema.js';
 export * from './client.schema.js';
