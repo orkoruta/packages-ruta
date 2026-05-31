@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ClientType, OrderStatus } from '../enums/index.js';
+import { ClientType, OrderStatus, PaymentStatus } from '../enums/index.js';
 import {
   loginSchema,
   loginRutaAdminSchema,
@@ -25,6 +25,13 @@ import {
   updatePickupPointSchema,
   pickupPointListQuerySchema,
   createOrderSchema,
+  confirmOrderSchema,
+  cancelOrderSchema,
+  requestCancelSchema,
+  orderTransitionSchema,
+  initiatePaymentSchema,
+  wompiWebhookEventSchema,
+  paymentStatusQuerySchema,
 } from './index.js';
 
 describe('auth schemas', () => {
@@ -280,6 +287,162 @@ describe('order schemas', () => {
 
   it('rejects empty order items', () => {
     const result = createOrderSchema.safeParse({ items: [] });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates confirm order with SHIP delivery and online payment', () => {
+    const parsed = confirmOrderSchema.parse({
+      delivery_type: 'SHIP',
+      delivery_address: {
+        line: 'Cra 7 # 32-16',
+        city: 'Bogotá',
+        state: 'Cundinamarca',
+        country: 'CO',
+      },
+      payment_method: 'ONLINE_AT_ORDER',
+    });
+    expect(parsed.delivery_type).toBe('SHIP');
+    expect(parsed.payment_method).toBe('ONLINE_AT_ORDER');
+  });
+
+  it('validates confirm order with PICKUP delivery', () => {
+    const parsed = confirmOrderSchema.parse({
+      delivery_type: 'PICKUP',
+      pickup_point_id: 5,
+      payment_method: 'CASH_ON_DELIVERY',
+    });
+    expect(parsed.delivery_type).toBe('PICKUP');
+    expect(parsed.pickup_point_id).toBe(5);
+  });
+
+  it('rejects confirm order without address or pickup_point_id', () => {
+    const result = confirmOrderSchema.safeParse({
+      delivery_type: 'SHIP',
+      payment_method: 'ONLINE_AT_ORDER',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates cancel order with reason', () => {
+    const parsed = cancelOrderSchema.parse({ reason: 'Me equivoqué de producto' });
+    expect(parsed.reason).toBe('Me equivoqué de producto');
+  });
+
+  it('rejects cancel order without reason', () => {
+    const result = cancelOrderSchema.safeParse({ reason: '' });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates requestCancel with reason', () => {
+    const parsed = requestCancelSchema.parse({ reason: 'Ya no lo necesito' });
+    expect(parsed.reason).toBe('Ya no lo necesito');
+  });
+
+  it('rejects requestCancel without reason', () => {
+    const result = requestCancelSchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+
+  it('validates order transition to a valid state', () => {
+    const parsed = orderTransitionSchema.parse({
+      to_state: OrderStatus.SELLER_CONFIRMED,
+      dimension: 'order_status',
+    });
+    expect(parsed.to_state).toBe('SELLER_CONFIRMED');
+    expect(parsed.dimension).toBe('order_status');
+  });
+
+  it('rejects order transition with invalid dimension', () => {
+    const result = orderTransitionSchema.safeParse({
+      to_state: OrderStatus.DELIVERED,
+      dimension: 'invalid_dimension',
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('payment schemas', () => {
+  it('validates initiate payment with no body', () => {
+    const parsed = initiatePaymentSchema.parse({});
+    expect(parsed.redirect_url).toBeUndefined();
+  });
+
+  it('validates initiate payment with redirect_url', () => {
+    const parsed = initiatePaymentSchema.parse({
+      redirect_url: 'https://tienda.example.com/confirmation',
+    });
+    expect(parsed.redirect_url).toBe('https://tienda.example.com/confirmation');
+  });
+
+  it('rejects initiate payment with invalid URL', () => {
+    const result = initiatePaymentSchema.safeParse({ redirect_url: 'not-a-url' });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates wompi APPROVED webhook event', () => {
+    const parsed = wompiWebhookEventSchema.parse({
+      event: 'transaction.updated',
+      data: {
+        transaction: {
+          id: 'txn_abc123',
+          status: 'APPROVED',
+          reference: 'ORDER-1001',
+          amount_in_cents: 5000000,
+          currency: 'COP',
+          payment_method_type: 'CARD',
+          created_at: '2026-05-27T10:00:00.000Z',
+        },
+      },
+      signature: {
+        checksum: 'abc123def456',
+        properties: ['transaction.id', 'transaction.status', 'transaction.amount_in_cents'],
+      },
+      environment: 'test',
+      timestamp: 1716800000,
+    });
+    expect(parsed.data.transaction.status).toBe('APPROVED');
+    expect(parsed.environment).toBe('test');
+  });
+
+  it('rejects wompi webhook with invalid transaction status', () => {
+    const result = wompiWebhookEventSchema.safeParse({
+      event: 'transaction.updated',
+      data: {
+        transaction: {
+          id: 'txn_abc',
+          status: 'PENDING',
+          reference: 'ORDER-1001',
+          amount_in_cents: 5000000,
+          currency: 'COP',
+          payment_method_type: 'CARD',
+          created_at: '2026-05-27T10:00:00.000Z',
+        },
+      },
+      signature: { checksum: 'abc', properties: [] },
+      environment: 'test',
+      timestamp: 1716800000,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates payment status query with defaults', () => {
+    const parsed = paymentStatusQuerySchema.parse({});
+    expect(parsed.page).toBe(1);
+    expect(parsed.page_size).toBe(20);
+    expect(parsed.payment_status).toBeUndefined();
+  });
+
+  it('validates payment status query with PAID filter', () => {
+    const parsed = paymentStatusQuerySchema.parse({
+      payment_status: PaymentStatus.PAID,
+      page: '2',
+    });
+    expect(parsed.payment_status).toBe('PAID');
+    expect(parsed.page).toBe(2);
+  });
+
+  it('rejects payment status query with invalid status', () => {
+    const result = paymentStatusQuerySchema.safeParse({ payment_status: 'INVALID_STATUS' });
     expect(result.success).toBe(false);
   });
 });
