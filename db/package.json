@@ -1,6 +1,6 @@
 {
   "name": "@orkoruta/db",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Cliente Prisma y helpers de tenant para RUTA",
   "main": "dist/index.js",
