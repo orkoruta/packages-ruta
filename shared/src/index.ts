@@ -12,6 +12,8 @@ export * from './types/payment.types.js';
 export * from './types/user.types.js';
 export * from './types/client.types.js';
 export * from './types/api.types.js';
+export * from './types/refund.types.js';
+export * from './types/recurrence.types.js';
 
 export * from './validators/index.js';
 
