@@ -1,6 +1,6 @@
 {
   "name": "@orkoruta/shared",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "type": "module",
   "description": "Tipos, enums, validators y constantes compartidos de RUTA",
   "main": "dist/index.js",
