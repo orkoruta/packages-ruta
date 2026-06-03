@@ -11,3 +11,5 @@ export * from './pickup_point.schema.js';
 export * from './refund.schema.js';
 export * from './recurrence.schema.js';
 export * from './corporate_order.schema.js';
+export * from './api_key.schema.js';
+export * from './api_order.schema.js';
