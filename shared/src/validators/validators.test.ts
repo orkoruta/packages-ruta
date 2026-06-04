@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ClientType, OrderStatus, PaymentStatus } from '../enums/index.js';
+import { ClientType, OrderStatus, PaymentStatus, RefundStatus, RecurrenceStatus, RecurrencePeriodicity } from '../enums/index.js';
 import {
   loginSchema,
   loginRutaAdminSchema,
@@ -32,6 +32,12 @@ import {
   initiatePaymentSchema,
   wompiWebhookEventSchema,
   paymentStatusQuerySchema,
+  initiateRefundSchema,
+  markRefundExecutedSchema,
+  refundListQuerySchema,
+  markAsRecurringSchema,
+  updateTemplateSchema,
+  recurrenceListQuerySchema,
 } from './index.js';
 
 describe('auth schemas', () => {
@@ -443,6 +449,168 @@ describe('payment schemas', () => {
 
   it('rejects payment status query with invalid status', () => {
     const result = paymentStatusQuerySchema.safeParse({ payment_status: 'INVALID_STATUS' });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('refund schemas', () => {
+  it('validates initiateRefundSchema with required fields', () => {
+    const parsed = initiateRefundSchema.parse({
+      order_id: BigInt(1001),
+      amount: 50000,
+    });
+    expect(parsed.order_id).toBe(BigInt(1001));
+    expect(parsed.amount).toBe(50000);
+    expect(parsed.reason).toBeUndefined();
+  });
+
+  it('validates initiateRefundSchema with optional reason', () => {
+    const parsed = initiateRefundSchema.parse({
+      order_id: BigInt(1001),
+      amount: 50000,
+      reason: 'Pedido cancelado por cliente',
+    });
+    expect(parsed.reason).toBe('Pedido cancelado por cliente');
+  });
+
+  it('rejects initiateRefundSchema when order_id is missing', () => {
+    const result = initiateRefundSchema.safeParse({ amount: 50000 });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects initiateRefundSchema when amount is negative', () => {
+    const result = initiateRefundSchema.safeParse({
+      order_id: BigInt(1001),
+      amount: -1000,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects initiateRefundSchema when amount is zero', () => {
+    const result = initiateRefundSchema.safeParse({
+      order_id: BigInt(1001),
+      amount: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates markRefundExecutedSchema with all optional fields', () => {
+    const parsed = markRefundExecutedSchema.parse({
+      external_provider_refund_id: 'wom_ref_abc123',
+      evidence: 'https://storage.example.com/receipt.pdf',
+    });
+    expect(parsed.external_provider_refund_id).toBe('wom_ref_abc123');
+    expect(parsed.evidence).toBe('https://storage.example.com/receipt.pdf');
+  });
+
+  it('validates markRefundExecutedSchema with empty body', () => {
+    const parsed = markRefundExecutedSchema.parse({});
+    expect(parsed.external_provider_refund_id).toBeUndefined();
+    expect(parsed.evidence).toBeUndefined();
+  });
+
+  it('validates refundListQuerySchema defaults', () => {
+    const parsed = refundListQuerySchema.parse({});
+    expect(parsed.page).toBe(1);
+    expect(parsed.page_size).toBe(20);
+    expect(parsed.refund_status).toBeUndefined();
+  });
+
+  it('validates refundListQuerySchema with status filter and coerced page', () => {
+    const parsed = refundListQuerySchema.parse({
+      refund_status: RefundStatus.REFUND_PENDING,
+      page: '3',
+      page_size: '10',
+    });
+    expect(parsed.refund_status).toBe('REFUND_PENDING');
+    expect(parsed.page).toBe(3);
+    expect(parsed.page_size).toBe(10);
+  });
+
+  it('rejects refundListQuerySchema with invalid status', () => {
+    const result = refundListQuerySchema.safeParse({ refund_status: 'INVALID_STATUS' });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates refundListQuerySchema with datetime range filters', () => {
+    const parsed = refundListQuerySchema.parse({
+      from: '2026-01-01T00:00:00Z',
+      to: '2026-06-01T23:59:59Z',
+    });
+    expect(parsed.from).toBe('2026-01-01T00:00:00Z');
+    expect(parsed.to).toBe('2026-06-01T23:59:59Z');
+  });
+});
+
+describe('recurrence schemas', () => {
+  it('validates markAsRecurringSchema with required periodicity', () => {
+    const parsed = markAsRecurringSchema.parse({
+      recurrence_periodicity: RecurrencePeriodicity.WEEKLY,
+    });
+    expect(parsed.recurrence_periodicity).toBe('WEEKLY');
+    expect(parsed.custom_interval_days).toBeUndefined();
+  });
+
+  it('rejects markAsRecurringSchema when recurrence_periodicity is missing', () => {
+    const result = markAsRecurringSchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects markAsRecurringSchema with invalid periodicity value', () => {
+    const result = markAsRecurringSchema.safeParse({ recurrence_periodicity: 'INVALID' });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates markAsRecurringSchema CUSTOM_INTERVAL requires custom_interval_days', () => {
+    const valid = markAsRecurringSchema.parse({
+      recurrence_periodicity: RecurrencePeriodicity.CUSTOM_INTERVAL,
+      custom_interval_days: 10,
+    });
+    expect(valid.custom_interval_days).toBe(10);
+  });
+
+  it('rejects markAsRecurringSchema CUSTOM_INTERVAL without custom_interval_days', () => {
+    const result = markAsRecurringSchema.safeParse({
+      recurrence_periodicity: RecurrencePeriodicity.CUSTOM_INTERVAL,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates updateTemplateSchema with all optional fields', () => {
+    const parsed = updateTemplateSchema.parse({
+      recurrence_periodicity: RecurrencePeriodicity.MONTHLY,
+      payment_method: 'CASH_ON_DELIVERY',
+    });
+    expect(parsed.recurrence_periodicity).toBe('MONTHLY');
+    expect(parsed.payment_method).toBe('CASH_ON_DELIVERY');
+  });
+
+  it('validates updateTemplateSchema with empty body', () => {
+    const parsed = updateTemplateSchema.parse({});
+    expect(parsed.recurrence_periodicity).toBeUndefined();
+    expect(parsed.delivery_address).toBeUndefined();
+  });
+
+  it('validates recurrenceListQuerySchema defaults', () => {
+    const parsed = recurrenceListQuerySchema.parse({});
+    expect(parsed.page).toBe(1);
+    expect(parsed.page_size).toBe(20);
+    expect(parsed.status).toBeUndefined();
+  });
+
+  it('validates recurrenceListQuerySchema with status filter and coerced pagination', () => {
+    const parsed = recurrenceListQuerySchema.parse({
+      status: RecurrenceStatus.RECURRENCE_ACTIVE,
+      page: '2',
+      page_size: '5',
+    });
+    expect(parsed.status).toBe('RECURRENCE_ACTIVE');
+    expect(parsed.page).toBe(2);
+    expect(parsed.page_size).toBe(5);
+  });
+
+  it('rejects recurrenceListQuerySchema with invalid status', () => {
+    const result = recurrenceListQuerySchema.safeParse({ status: 'INVALID_STATUS' });
     expect(result.success).toBe(false);
   });
 });

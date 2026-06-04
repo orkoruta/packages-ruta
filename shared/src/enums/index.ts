@@ -6,3 +6,4 @@ export * from './client_type.js';
 export * from './user_type.js';
 export * from './closure_reason.js';
 export * from './order_config.js';
+// refund_modality and recurrence_status re-export from order_config above.
