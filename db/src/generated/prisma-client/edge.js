@@ -619,7 +619,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/mnt/c/Dropbox/Alex/DEV/ruta/packages-ruta/db/src/generated/prisma-client",
+      "value": "/Users/msimonz/Library/CloudStorage/Dropbox/Simon/TRABAJO/ruta/packages-ruta/db/src/generated/prisma-client",
       "fromEnvVar": null
     },
     "config": {
@@ -628,7 +628,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "darwin-arm64",
         "native": true
       },
       {
@@ -643,7 +643,7 @@ const config = {
     "previewFeatures": [
       "multiSchema"
     ],
-    "sourceFilePath": "/mnt/c/Dropbox/Alex/DEV/ruta/packages-ruta/db/prisma/schema.prisma",
+    "sourceFilePath": "/Users/msimonz/Library/CloudStorage/Dropbox/Simon/TRABAJO/ruta/packages-ruta/db/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

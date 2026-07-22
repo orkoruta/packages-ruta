@@ -16,6 +16,8 @@ export const ERROR_CODES = {
   API_KEY_REVOKED: 'API_KEY_REVOKED',
   API_KEY_EXPIRED: 'API_KEY_EXPIRED',
   SCOPE_NOT_ALLOWED: 'SCOPE_NOT_ALLOWED',
+  /** Un proveedor externo (p. ej. geocodificación) falló o no está configurado. */
+  EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
@@ -38,4 +40,5 @@ export const HTTP_STATUS_BY_ERROR_CODE: Record<ErrorCode, number> = {
   [ERROR_CODES.API_KEY_REVOKED]: 401,
   [ERROR_CODES.API_KEY_EXPIRED]: 401,
   [ERROR_CODES.SCOPE_NOT_ALLOWED]: 403,
+  [ERROR_CODES.EXTERNAL_SERVICE_ERROR]: 502,
 };

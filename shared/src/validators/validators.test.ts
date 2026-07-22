@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { ClientType, OrderStatus, PaymentStatus, RefundStatus, RecurrenceStatus, RecurrencePeriodicity } from '../enums/index.js';
 import {
+  createCorporateOrderSchema,
+  createCorporateOrderRecurringSchema,
   loginSchema,
   loginRutaAdminSchema,
   registerBuyerSchema,
@@ -611,6 +613,79 @@ describe('recurrence schemas', () => {
 
   it('rejects recurrenceListQuerySchema with invalid status', () => {
     const result = recurrenceListQuerySchema.safeParse({ status: 'INVALID_STATUS' });
+    expect(result.success).toBe(false);
+  });
+});
+
+// ── Flujo 6 — destino de entrega en pedidos corporativos ─────────────────────
+
+describe('createCorporateOrderSchema — destino de entrega', () => {
+  const base = {
+    buyer_id: 13,
+    corporate_contact: { name: 'Empresa XYZ' },
+    items: [{ product_id: 10, quantity: 2 }],
+    payment_method: 'CASH_ON_DELIVERY' as const,
+  };
+
+  const address = {
+    line: 'Cra 7 #140-20',
+    city: 'Bogotá',
+    state: 'Cundinamarca',
+    country: 'CO',
+    latitude: 4.728,
+    longitude: -74.045,
+  };
+
+  it('acepta SHIP con dirección completa', () => {
+    const result = createCorporateOrderSchema.safeParse({
+      ...base,
+      delivery_type: 'SHIP',
+      delivery_address: address,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rechaza SHIP sin dirección', () => {
+    const result = createCorporateOrderSchema.safeParse({ ...base, delivery_type: 'SHIP' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.delivery_address).toBeDefined();
+    }
+  });
+
+  it('rechaza SHIP con dirección sin coordenadas — sin ellas no llega al mapa', () => {
+    const { latitude: _lat, longitude: _lng, ...noCoords } = address;
+    const result = createCorporateOrderSchema.safeParse({
+      ...base,
+      delivery_type: 'SHIP',
+      delivery_address: noCoords,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('acepta PICKUP con punto de recogida', () => {
+    const result = createCorporateOrderSchema.safeParse({
+      ...base,
+      delivery_type: 'PICKUP',
+      pickup_point_id: 3,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rechaza PICKUP sin punto de recogida', () => {
+    const result = createCorporateOrderSchema.safeParse({ ...base, delivery_type: 'PICKUP' });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.pickup_point_id).toBeDefined();
+    }
+  });
+
+  it('aplica la misma exigencia de destino al corporativo recurrente', () => {
+    const result = createCorporateOrderRecurringSchema.safeParse({
+      ...base,
+      delivery_type: 'SHIP',
+      recurrence_periodicity: RecurrencePeriodicity.WEEKLY,
+    });
     expect(result.success).toBe(false);
   });
 });
