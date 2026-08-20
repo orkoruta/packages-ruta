@@ -3,7 +3,20 @@ import { createCourierSchema } from './user.schema.js';
 
 export { createCourierSchema };
 
-export const updateCourierSchema = createCourierSchema.partial().extend({
+/**
+ * **Explícito, no `createCourierSchema.partial()`.** El derivado ofrecía
+ * `email` y `password`, que el PATCH descarta, y **omitía `vehicle_plate`**,
+ * que sí acepta: quien añadiera la placa al formulario se habría encontrado un
+ * error de compilación en un campo que la API guarda sin problema. Espeja
+ * `services/couriers.service.ts`.
+ */
+export const updateCourierSchema = z.object({
+  full_name: z.string().min(1).max(200).optional(),
+  phone: z.string().min(1).max(30).optional(),
+  document_type: z.string().min(1).max(10).optional(),
+  document_number: z.string().min(1).max(50).optional(),
+  transport_mode: z.string().optional(),
+  vehicle_plate: z.string().optional(),
   status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional(),
 });
 

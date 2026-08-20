@@ -18,6 +18,12 @@ export const ERROR_CODES = {
   SCOPE_NOT_ALLOWED: 'SCOPE_NOT_ALLOWED',
   /** Un proveedor externo (p. ej. geocodificación) falló o no está configurado. */
   EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
+  /**
+   * El recurso existió y se eliminó por vencimiento (410 Gone). Hoy lo usa la
+   * foto del recibo, que se purga pasada su vigencia: no es lo mismo que un 404
+   * —«nunca hubo evidencia»— y el panel tiene que poder decir cuál de las dos.
+   */
+  EVIDENCE_EXPIRED: 'EVIDENCE_EXPIRED',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
@@ -36,6 +42,7 @@ export const HTTP_STATUS_BY_ERROR_CODE: Record<ErrorCode, number> = {
   [ERROR_CODES.WEBHOOK_SIGNATURE_INVALID]: 400,
   [ERROR_CODES.RATE_LIMITED]: 429,
   [ERROR_CODES.TENANT_ISOLATION_VIOLATION]: 500,
+  [ERROR_CODES.EVIDENCE_EXPIRED]: 410,
   [ERROR_CODES.API_KEY_INVALID]: 401,
   [ERROR_CODES.API_KEY_REVOKED]: 401,
   [ERROR_CODES.API_KEY_EXPIRED]: 401,

@@ -12548,11 +12548,15 @@ export namespace Prisma {
   export type Courier_profilesAvgAggregateOutputType = {
     user_id: number | null
     client_id: number | null
+    last_latitude: Decimal | null
+    last_longitude: Decimal | null
   }
 
   export type Courier_profilesSumAggregateOutputType = {
     user_id: bigint | null
     client_id: bigint | null
+    last_latitude: Decimal | null
+    last_longitude: Decimal | null
   }
 
   export type Courier_profilesMinAggregateOutputType = {
@@ -12560,6 +12564,9 @@ export namespace Prisma {
     client_id: bigint | null
     transport_method: string | null
     vehicle_plate: string | null
+    last_latitude: Decimal | null
+    last_longitude: Decimal | null
+    last_location_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12569,6 +12576,9 @@ export namespace Prisma {
     client_id: bigint | null
     transport_method: string | null
     vehicle_plate: string | null
+    last_latitude: Decimal | null
+    last_longitude: Decimal | null
+    last_location_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12579,6 +12589,9 @@ export namespace Prisma {
     transport_method: number
     vehicle_plate: number
     additional_data: number
+    last_latitude: number
+    last_longitude: number
+    last_location_at: number
     created_at: number
     updated_at: number
     _all: number
@@ -12588,11 +12601,15 @@ export namespace Prisma {
   export type Courier_profilesAvgAggregateInputType = {
     user_id?: true
     client_id?: true
+    last_latitude?: true
+    last_longitude?: true
   }
 
   export type Courier_profilesSumAggregateInputType = {
     user_id?: true
     client_id?: true
+    last_latitude?: true
+    last_longitude?: true
   }
 
   export type Courier_profilesMinAggregateInputType = {
@@ -12600,6 +12617,9 @@ export namespace Prisma {
     client_id?: true
     transport_method?: true
     vehicle_plate?: true
+    last_latitude?: true
+    last_longitude?: true
+    last_location_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -12609,6 +12629,9 @@ export namespace Prisma {
     client_id?: true
     transport_method?: true
     vehicle_plate?: true
+    last_latitude?: true
+    last_longitude?: true
+    last_location_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -12619,6 +12642,9 @@ export namespace Prisma {
     transport_method?: true
     vehicle_plate?: true
     additional_data?: true
+    last_latitude?: true
+    last_longitude?: true
+    last_location_at?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -12716,6 +12742,9 @@ export namespace Prisma {
     transport_method: string | null
     vehicle_plate: string | null
     additional_data: JsonValue | null
+    last_latitude: Decimal | null
+    last_longitude: Decimal | null
+    last_location_at: Date | null
     created_at: Date
     updated_at: Date
     _count: Courier_profilesCountAggregateOutputType | null
@@ -12745,6 +12774,9 @@ export namespace Prisma {
     transport_method?: boolean
     vehicle_plate?: boolean
     additional_data?: boolean
+    last_latitude?: boolean
+    last_longitude?: boolean
+    last_location_at?: boolean
     created_at?: boolean
     updated_at?: boolean
     users?: boolean | usersDefaultArgs<ExtArgs>
@@ -12756,6 +12788,9 @@ export namespace Prisma {
     transport_method?: boolean
     vehicle_plate?: boolean
     additional_data?: boolean
+    last_latitude?: boolean
+    last_longitude?: boolean
+    last_location_at?: boolean
     created_at?: boolean
     updated_at?: boolean
     users?: boolean | usersDefaultArgs<ExtArgs>
@@ -12767,6 +12802,9 @@ export namespace Prisma {
     transport_method?: boolean
     vehicle_plate?: boolean
     additional_data?: boolean
+    last_latitude?: boolean
+    last_longitude?: boolean
+    last_location_at?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -12789,6 +12827,9 @@ export namespace Prisma {
       transport_method: string | null
       vehicle_plate: string | null
       additional_data: Prisma.JsonValue | null
+      last_latitude: Prisma.Decimal | null
+      last_longitude: Prisma.Decimal | null
+      last_location_at: Date | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["courier_profiles"]>
@@ -13190,6 +13231,9 @@ export namespace Prisma {
     readonly transport_method: FieldRef<"courier_profiles", 'String'>
     readonly vehicle_plate: FieldRef<"courier_profiles", 'String'>
     readonly additional_data: FieldRef<"courier_profiles", 'Json'>
+    readonly last_latitude: FieldRef<"courier_profiles", 'Decimal'>
+    readonly last_longitude: FieldRef<"courier_profiles", 'Decimal'>
+    readonly last_location_at: FieldRef<"courier_profiles", 'DateTime'>
     readonly created_at: FieldRef<"courier_profiles", 'DateTime'>
     readonly updated_at: FieldRef<"courier_profiles", 'DateTime'>
   }
@@ -19773,6 +19817,7 @@ export namespace Prisma {
     delivery_address_longitude: Decimal | null
     delivery_instructions: string | null
     pickup_point_id: bigint | null
+    scheduled_delivery_date: Date | null
     subtotal: Decimal | null
     tax: Decimal | null
     shipping_fee: Decimal | null
@@ -19820,6 +19865,7 @@ export namespace Prisma {
     delivery_address_longitude: Decimal | null
     delivery_instructions: string | null
     pickup_point_id: bigint | null
+    scheduled_delivery_date: Date | null
     subtotal: Decimal | null
     tax: Decimal | null
     shipping_fee: Decimal | null
@@ -19867,6 +19913,7 @@ export namespace Prisma {
     delivery_address_longitude: number
     delivery_instructions: number
     pickup_point_id: number
+    scheduled_delivery_date: number
     subtotal: number
     tax: number
     shipping_fee: number
@@ -19952,6 +19999,7 @@ export namespace Prisma {
     delivery_address_longitude?: true
     delivery_instructions?: true
     pickup_point_id?: true
+    scheduled_delivery_date?: true
     subtotal?: true
     tax?: true
     shipping_fee?: true
@@ -19999,6 +20047,7 @@ export namespace Prisma {
     delivery_address_longitude?: true
     delivery_instructions?: true
     pickup_point_id?: true
+    scheduled_delivery_date?: true
     subtotal?: true
     tax?: true
     shipping_fee?: true
@@ -20046,6 +20095,7 @@ export namespace Prisma {
     delivery_address_longitude?: true
     delivery_instructions?: true
     pickup_point_id?: true
+    scheduled_delivery_date?: true
     subtotal?: true
     tax?: true
     shipping_fee?: true
@@ -20180,6 +20230,7 @@ export namespace Prisma {
     delivery_address_longitude: Decimal | null
     delivery_instructions: string | null
     pickup_point_id: bigint | null
+    scheduled_delivery_date: Date | null
     subtotal: Decimal
     tax: Decimal
     shipping_fee: Decimal
@@ -20246,6 +20297,7 @@ export namespace Prisma {
     delivery_address_longitude?: boolean
     delivery_instructions?: boolean
     pickup_point_id?: boolean
+    scheduled_delivery_date?: boolean
     subtotal?: boolean
     tax?: boolean
     shipping_fee?: boolean
@@ -20306,6 +20358,7 @@ export namespace Prisma {
     delivery_address_longitude?: boolean
     delivery_instructions?: boolean
     pickup_point_id?: boolean
+    scheduled_delivery_date?: boolean
     subtotal?: boolean
     tax?: boolean
     shipping_fee?: boolean
@@ -20359,6 +20412,7 @@ export namespace Prisma {
     delivery_address_longitude?: boolean
     delivery_instructions?: boolean
     pickup_point_id?: boolean
+    scheduled_delivery_date?: boolean
     subtotal?: boolean
     tax?: boolean
     shipping_fee?: boolean
@@ -20446,6 +20500,7 @@ export namespace Prisma {
       delivery_address_longitude: Prisma.Decimal | null
       delivery_instructions: string | null
       pickup_point_id: bigint | null
+      scheduled_delivery_date: Date | null
       subtotal: Prisma.Decimal
       tax: Prisma.Decimal
       shipping_fee: Prisma.Decimal
@@ -20895,6 +20950,7 @@ export namespace Prisma {
     readonly delivery_address_longitude: FieldRef<"orders", 'Decimal'>
     readonly delivery_instructions: FieldRef<"orders", 'String'>
     readonly pickup_point_id: FieldRef<"orders", 'BigInt'>
+    readonly scheduled_delivery_date: FieldRef<"orders", 'DateTime'>
     readonly subtotal: FieldRef<"orders", 'Decimal'>
     readonly tax: FieldRef<"orders", 'Decimal'>
     readonly shipping_fee: FieldRef<"orders", 'Decimal'>
@@ -35195,6 +35251,9 @@ export namespace Prisma {
     transport_method: 'transport_method',
     vehicle_plate: 'vehicle_plate',
     additional_data: 'additional_data',
+    last_latitude: 'last_latitude',
+    last_longitude: 'last_longitude',
+    last_location_at: 'last_location_at',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -35329,6 +35388,7 @@ export namespace Prisma {
     delivery_address_longitude: 'delivery_address_longitude',
     delivery_instructions: 'delivery_instructions',
     pickup_point_id: 'pickup_point_id',
+    scheduled_delivery_date: 'scheduled_delivery_date',
     subtotal: 'subtotal',
     tax: 'tax',
     shipping_fee: 'shipping_fee',
@@ -36530,6 +36590,9 @@ export namespace Prisma {
     transport_method?: StringNullableFilter<"courier_profiles"> | string | null
     vehicle_plate?: StringNullableFilter<"courier_profiles"> | string | null
     additional_data?: JsonNullableFilter<"courier_profiles">
+    last_latitude?: DecimalNullableFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: DecimalNullableFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: DateTimeNullableFilter<"courier_profiles"> | Date | string | null
     created_at?: DateTimeFilter<"courier_profiles"> | Date | string
     updated_at?: DateTimeFilter<"courier_profiles"> | Date | string
     users?: XOR<UsersRelationFilter, usersWhereInput>
@@ -36541,6 +36604,9 @@ export namespace Prisma {
     transport_method?: SortOrderInput | SortOrder
     vehicle_plate?: SortOrderInput | SortOrder
     additional_data?: SortOrderInput | SortOrder
+    last_latitude?: SortOrderInput | SortOrder
+    last_longitude?: SortOrderInput | SortOrder
+    last_location_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     users?: usersOrderByWithRelationInput
@@ -36556,6 +36622,9 @@ export namespace Prisma {
     transport_method?: StringNullableFilter<"courier_profiles"> | string | null
     vehicle_plate?: StringNullableFilter<"courier_profiles"> | string | null
     additional_data?: JsonNullableFilter<"courier_profiles">
+    last_latitude?: DecimalNullableFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: DecimalNullableFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: DateTimeNullableFilter<"courier_profiles"> | Date | string | null
     created_at?: DateTimeFilter<"courier_profiles"> | Date | string
     updated_at?: DateTimeFilter<"courier_profiles"> | Date | string
     users?: XOR<UsersRelationFilter, usersWhereInput>
@@ -36567,6 +36636,9 @@ export namespace Prisma {
     transport_method?: SortOrderInput | SortOrder
     vehicle_plate?: SortOrderInput | SortOrder
     additional_data?: SortOrderInput | SortOrder
+    last_latitude?: SortOrderInput | SortOrder
+    last_longitude?: SortOrderInput | SortOrder
+    last_location_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: courier_profilesCountOrderByAggregateInput
@@ -36585,6 +36657,9 @@ export namespace Prisma {
     transport_method?: StringNullableWithAggregatesFilter<"courier_profiles"> | string | null
     vehicle_plate?: StringNullableWithAggregatesFilter<"courier_profiles"> | string | null
     additional_data?: JsonNullableWithAggregatesFilter<"courier_profiles">
+    last_latitude?: DecimalNullableWithAggregatesFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: DecimalNullableWithAggregatesFilter<"courier_profiles"> | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: DateTimeNullableWithAggregatesFilter<"courier_profiles"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"courier_profiles"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"courier_profiles"> | Date | string
   }
@@ -37128,6 +37203,7 @@ export namespace Prisma {
     delivery_address_longitude?: DecimalNullableFilter<"orders"> | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: StringNullableFilter<"orders"> | string | null
     pickup_point_id?: BigIntNullableFilter<"orders"> | bigint | number | null
+    scheduled_delivery_date?: DateTimeNullableFilter<"orders"> | Date | string | null
     subtotal?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tax?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
@@ -37187,6 +37263,7 @@ export namespace Prisma {
     delivery_address_longitude?: SortOrderInput | SortOrder
     delivery_instructions?: SortOrderInput | SortOrder
     pickup_point_id?: SortOrderInput | SortOrder
+    scheduled_delivery_date?: SortOrderInput | SortOrder
     subtotal?: SortOrder
     tax?: SortOrder
     shipping_fee?: SortOrder
@@ -37250,6 +37327,7 @@ export namespace Prisma {
     delivery_address_longitude?: DecimalNullableFilter<"orders"> | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: StringNullableFilter<"orders"> | string | null
     pickup_point_id?: BigIntNullableFilter<"orders"> | bigint | number | null
+    scheduled_delivery_date?: DateTimeNullableFilter<"orders"> | Date | string | null
     subtotal?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tax?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
@@ -37309,6 +37387,7 @@ export namespace Prisma {
     delivery_address_longitude?: SortOrderInput | SortOrder
     delivery_instructions?: SortOrderInput | SortOrder
     pickup_point_id?: SortOrderInput | SortOrder
+    scheduled_delivery_date?: SortOrderInput | SortOrder
     subtotal?: SortOrder
     tax?: SortOrder
     shipping_fee?: SortOrder
@@ -37364,6 +37443,7 @@ export namespace Prisma {
     delivery_address_longitude?: DecimalNullableWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: StringNullableWithAggregatesFilter<"orders"> | string | null
     pickup_point_id?: BigIntNullableWithAggregatesFilter<"orders"> | bigint | number | null
+    scheduled_delivery_date?: DateTimeNullableWithAggregatesFilter<"orders"> | Date | string | null
     subtotal?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tax?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalWithAggregatesFilter<"orders"> | Decimal | DecimalJsLike | number | string
@@ -39589,6 +39669,9 @@ export namespace Prisma {
     transport_method?: string | null
     vehicle_plate?: string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: Decimal | DecimalJsLike | number | string | null
+    last_longitude?: Decimal | DecimalJsLike | number | string | null
+    last_location_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     users: usersCreateNestedOneWithoutCourier_profilesInput
@@ -39600,6 +39683,9 @@ export namespace Prisma {
     transport_method?: string | null
     vehicle_plate?: string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: Decimal | DecimalJsLike | number | string | null
+    last_longitude?: Decimal | DecimalJsLike | number | string | null
+    last_location_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39608,6 +39694,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: usersUpdateOneRequiredWithoutCourier_profilesNestedInput
@@ -39619,6 +39708,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39629,6 +39721,9 @@ export namespace Prisma {
     transport_method?: string | null
     vehicle_plate?: string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: Decimal | DecimalJsLike | number | string | null
+    last_longitude?: Decimal | DecimalJsLike | number | string | null
+    last_location_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39637,6 +39732,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39647,6 +39745,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40202,6 +40303,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -40261,6 +40363,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -40308,6 +40411,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -40367,6 +40471,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -40420,6 +40525,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -40461,6 +40567,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -40508,6 +40615,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -42935,6 +43043,9 @@ export namespace Prisma {
     transport_method?: SortOrder
     vehicle_plate?: SortOrder
     additional_data?: SortOrder
+    last_latitude?: SortOrder
+    last_longitude?: SortOrder
+    last_location_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -42942,6 +43053,8 @@ export namespace Prisma {
   export type courier_profilesAvgOrderByAggregateInput = {
     user_id?: SortOrder
     client_id?: SortOrder
+    last_latitude?: SortOrder
+    last_longitude?: SortOrder
   }
 
   export type courier_profilesMaxOrderByAggregateInput = {
@@ -42949,6 +43062,9 @@ export namespace Prisma {
     client_id?: SortOrder
     transport_method?: SortOrder
     vehicle_plate?: SortOrder
+    last_latitude?: SortOrder
+    last_longitude?: SortOrder
+    last_location_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -42958,6 +43074,9 @@ export namespace Prisma {
     client_id?: SortOrder
     transport_method?: SortOrder
     vehicle_plate?: SortOrder
+    last_latitude?: SortOrder
+    last_longitude?: SortOrder
+    last_location_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -42965,6 +43084,8 @@ export namespace Prisma {
   export type courier_profilesSumOrderByAggregateInput = {
     user_id?: SortOrder
     client_id?: SortOrder
+    last_latitude?: SortOrder
+    last_longitude?: SortOrder
   }
 
   export type OrdersRelationFilter = {
@@ -43502,6 +43623,7 @@ export namespace Prisma {
     delivery_address_longitude?: SortOrder
     delivery_instructions?: SortOrder
     pickup_point_id?: SortOrder
+    scheduled_delivery_date?: SortOrder
     subtotal?: SortOrder
     tax?: SortOrder
     shipping_fee?: SortOrder
@@ -43567,6 +43689,7 @@ export namespace Prisma {
     delivery_address_longitude?: SortOrder
     delivery_instructions?: SortOrder
     pickup_point_id?: SortOrder
+    scheduled_delivery_date?: SortOrder
     subtotal?: SortOrder
     tax?: SortOrder
     shipping_fee?: SortOrder
@@ -43614,6 +43737,7 @@ export namespace Prisma {
     delivery_address_longitude?: SortOrder
     delivery_instructions?: SortOrder
     pickup_point_id?: SortOrder
+    scheduled_delivery_date?: SortOrder
     subtotal?: SortOrder
     tax?: SortOrder
     shipping_fee?: SortOrder
@@ -47861,6 +47985,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -47917,6 +48042,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -48173,6 +48299,7 @@ export namespace Prisma {
     delivery_address_longitude?: DecimalNullableFilter<"orders"> | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: StringNullableFilter<"orders"> | string | null
     pickup_point_id?: BigIntNullableFilter<"orders"> | bigint | number | null
+    scheduled_delivery_date?: DateTimeNullableFilter<"orders"> | Date | string | null
     subtotal?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     tax?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFilter<"orders"> | Decimal | DecimalJsLike | number | string
@@ -48446,6 +48573,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -48503,6 +48631,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -49752,6 +49881,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -49810,6 +49940,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -50020,6 +50151,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -50078,6 +50210,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -50497,6 +50630,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -50555,6 +50689,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -50658,6 +50793,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -50716,6 +50852,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -50809,6 +50946,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -50867,6 +51005,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -50929,6 +51068,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -50987,6 +51127,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -52259,6 +52400,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -52317,6 +52459,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -52541,6 +52684,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -52599,6 +52743,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -52708,6 +52853,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -52764,6 +52910,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -53350,6 +53497,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -53406,6 +53554,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -54010,6 +54159,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -54068,6 +54218,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -54257,6 +54408,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -54315,6 +54467,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -54559,6 +54712,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -54617,6 +54771,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -54833,6 +54988,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -54891,6 +55047,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -55178,6 +55335,9 @@ export namespace Prisma {
     transport_method?: string | null
     vehicle_plate?: string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: Decimal | DecimalJsLike | number | string | null
+    last_longitude?: Decimal | DecimalJsLike | number | string | null
+    last_location_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -55186,6 +55346,9 @@ export namespace Prisma {
     transport_method?: string | null
     vehicle_plate?: string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: Decimal | DecimalJsLike | number | string | null
+    last_longitude?: Decimal | DecimalJsLike | number | string | null
+    last_location_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -55340,6 +55503,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -55396,6 +55560,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -55453,6 +55618,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -55509,6 +55675,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -55966,6 +56133,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -55974,6 +56144,9 @@ export namespace Prisma {
     transport_method?: NullableStringFieldUpdateOperationsInput | string | null
     vehicle_plate?: NullableStringFieldUpdateOperationsInput | string | null
     additional_data?: NullableJsonNullValueInput | InputJsonValue
+    last_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    last_location_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -56550,6 +56723,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -56631,6 +56805,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -56687,6 +56862,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -56738,6 +56914,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -56960,6 +57137,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -57255,6 +57433,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -57312,6 +57491,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -57364,6 +57544,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58233,6 +58414,7 @@ export namespace Prisma {
     delivery_address_latitude?: Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -58293,6 +58475,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58349,6 +58532,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58400,6 +58584,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58553,6 +58738,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -58594,6 +58780,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58650,6 +58837,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58701,6 +58889,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -58786,6 +58975,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -58831,6 +59021,7 @@ export namespace Prisma {
     delivery_address_longitude?: Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: string | null
     pickup_point_id?: bigint | number | null
+    scheduled_delivery_date?: Date | string | null
     subtotal?: Decimal | DecimalJsLike | number | string
     tax?: Decimal | DecimalJsLike | number | string
     shipping_fee?: Decimal | DecimalJsLike | number | string
@@ -59100,6 +59291,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59156,6 +59348,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59207,6 +59400,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59248,6 +59442,7 @@ export namespace Prisma {
     delivery_address_latitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59304,6 +59499,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59355,6 +59551,7 @@ export namespace Prisma {
     delivery_address_longitude?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     delivery_instructions?: NullableStringFieldUpdateOperationsInput | string | null
     pickup_point_id?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    scheduled_delivery_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tax?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     shipping_fee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string

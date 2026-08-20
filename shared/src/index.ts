@@ -17,5 +17,7 @@ export * from './types/recurrence.types.js';
 
 export * from './validators/index.js';
 
+export * from './utils/date_range.js';
+
 export * from './constants/error_codes.js';
 export * from './constants/parameter_keys.js';

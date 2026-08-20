@@ -248,6 +248,9 @@ exports.Prisma.Courier_profilesScalarFieldEnum = {
   transport_method: 'transport_method',
   vehicle_plate: 'vehicle_plate',
   additional_data: 'additional_data',
+  last_latitude: 'last_latitude',
+  last_longitude: 'last_longitude',
+  last_location_at: 'last_location_at',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -361,6 +364,7 @@ exports.Prisma.OrdersScalarFieldEnum = {
   delivery_address_longitude: 'delivery_address_longitude',
   delivery_instructions: 'delivery_instructions',
   pickup_point_id: 'pickup_point_id',
+  scheduled_delivery_date: 'scheduled_delivery_date',
   subtotal: 'subtotal',
   tax: 'tax',
   shipping_fee: 'shipping_fee',

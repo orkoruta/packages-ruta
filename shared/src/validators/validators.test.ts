@@ -6,6 +6,7 @@ import {
   loginSchema,
   loginRutaAdminSchema,
   registerBuyerSchema,
+  guestBuyerSchema,
   refreshSessionSchema,
   logoutSchema,
   controlViewEnterSchema,
@@ -187,8 +188,15 @@ describe('product schemas', () => {
   });
 
   it('validates partial product update with status', () => {
-    const parsed = updateProductSchema.parse({ status: 'ARCHIVED' });
-    expect(parsed.status).toBe('ARCHIVED');
+    const parsed = updateProductSchema.parse({ status: 'INACTIVE' });
+    expect(parsed.status).toBe('INACTIVE');
+  });
+
+  it('rechaza ARCHIVED: el CHECK de la BD solo admite ACTIVE/INACTIVE', () => {
+    // Este test afirmaba lo contrario y pasaba, porque comprobaba una copia de
+    // shared que no usaba nadie.
+    expect(updateProductSchema.safeParse({ status: 'ARCHIVED' }).success).toBe(false);
+    expect(updateCategorySchema.safeParse({ status: 'ARCHIVED' }).success).toBe(false);
   });
 });
 
@@ -250,22 +258,39 @@ describe('courier schemas', () => {
   });
 });
 
+/**
+ * Estos tests describían un contrato que la API nunca tuvo: `address` en vez de
+ * `address_line`, un `page_size` por defecto de 50 cuando el backend siempre
+ * usó 20, y un `status` en el update que el esquema de creación no acepta —el
+ * estado se cambia con `POST /:id/activate` y `/deactivate`—. Pasaban porque
+ * comprobaban la copia de shared, que no la usaba nadie. Ahora shared es la
+ * definición viva y estos casos reflejan lo que el backend valida.
+ */
 describe('pickup point schemas', () => {
   it('validates pickup point creation', () => {
     const parsed = createPickupPointSchema.parse({
       name: 'Punto Centro',
-      address: 'Cra 7 # 32-16',
+      address_line: 'Cra 7 # 32-16',
       city: 'Bogotá',
       latitude: 4.6951,
       longitude: -74.0427,
     });
     expect(parsed.name).toBe('Punto Centro');
+    expect(parsed.address_line).toBe('Cra 7 # 32-16');
+  });
+
+  it('requires address_line, not address', () => {
+    const result = createPickupPointSchema.safeParse({
+      name: 'Punto Centro',
+      address: 'Cra 7 # 32-16',
+    });
+    expect(result.success).toBe(false);
   });
 
   it('rejects invalid coordinates', () => {
     const result = createPickupPointSchema.safeParse({
       name: 'Punto',
-      address: 'Cra 7',
+      address_line: 'Cra 7',
       city: 'Bogotá',
       latitude: 200,
       longitude: -74,
@@ -273,14 +298,23 @@ describe('pickup point schemas', () => {
     expect(result.success).toBe(false);
   });
 
+  it('accepts opening_hours as an object, not a string', () => {
+    const parsed = createPickupPointSchema.parse({
+      name: 'Punto Centro',
+      address_line: 'Cra 7 # 32-16',
+      opening_hours: { 'lunes-domingo': '12:00-22:00' },
+    });
+    expect(parsed.opening_hours).toEqual({ 'lunes-domingo': '12:00-22:00' });
+  });
+
   it('validates pickup point list query with page_size default', () => {
     const parsed = pickupPointListQuerySchema.parse({ status: 'ACTIVE' });
-    expect(parsed.page_size).toBe(50);
+    expect(parsed.page_size).toBe(20);
   });
 
   it('validates partial pickup point update', () => {
-    const parsed = updatePickupPointSchema.parse({ status: 'INACTIVE' });
-    expect(parsed.status).toBe('INACTIVE');
+    const parsed = updatePickupPointSchema.parse({ contact_phone: '+573001234999' });
+    expect(parsed.contact_phone).toBe('+573001234999');
   });
 });
 
@@ -455,35 +489,40 @@ describe('payment schemas', () => {
   });
 });
 
+/**
+ * El `order_id` que estos tests exigían en el cuerpo va en la ruta
+ * (`POST /admin/orders/:id/refunds`), y faltaba `refund_modality`, que es
+ * obligatorio. Se probaba una copia que no usaba nadie.
+ */
 describe('refund schemas', () => {
   it('validates initiateRefundSchema with required fields', () => {
     const parsed = initiateRefundSchema.parse({
-      order_id: BigInt(1001),
       amount: 50000,
+      refund_modality: 'BANK_REFUND',
     });
-    expect(parsed.order_id).toBe(BigInt(1001));
     expect(parsed.amount).toBe(50000);
+    expect(parsed.refund_modality).toBe('BANK_REFUND');
     expect(parsed.reason).toBeUndefined();
   });
 
   it('validates initiateRefundSchema with optional reason', () => {
     const parsed = initiateRefundSchema.parse({
-      order_id: BigInt(1001),
       amount: 50000,
+      refund_modality: 'STORE_CREDIT',
       reason: 'Pedido cancelado por cliente',
     });
     expect(parsed.reason).toBe('Pedido cancelado por cliente');
   });
 
-  it('rejects initiateRefundSchema when order_id is missing', () => {
+  it('rejects initiateRefundSchema when refund_modality is missing', () => {
     const result = initiateRefundSchema.safeParse({ amount: 50000 });
     expect(result.success).toBe(false);
   });
 
   it('rejects initiateRefundSchema when amount is negative', () => {
     const result = initiateRefundSchema.safeParse({
-      order_id: BigInt(1001),
       amount: -1000,
+      refund_modality: 'BANK_REFUND',
     });
     expect(result.success).toBe(false);
   });
@@ -498,17 +537,26 @@ describe('refund schemas', () => {
 
   it('validates markRefundExecutedSchema with all optional fields', () => {
     const parsed = markRefundExecutedSchema.parse({
+      outcome: 'REFUNDED',
+      amount_executed: 50000,
       external_provider_refund_id: 'wom_ref_abc123',
       evidence: 'https://storage.example.com/receipt.pdf',
     });
+    expect(parsed.outcome).toBe('REFUNDED');
+    expect(parsed.amount_executed).toBe(50000);
     expect(parsed.external_provider_refund_id).toBe('wom_ref_abc123');
-    expect(parsed.evidence).toBe('https://storage.example.com/receipt.pdf');
   });
 
-  it('validates markRefundExecutedSchema with empty body', () => {
-    const parsed = markRefundExecutedSchema.parse({});
-    expect(parsed.external_provider_refund_id).toBeUndefined();
-    expect(parsed.evidence).toBeUndefined();
+  it('requires outcome: un cuerpo vacío no vale', () => {
+    // El panel mandaba `result` en vez de `outcome`, así que este endpoint
+    // devolvía 400 siempre. Aquí queda fijado que el campo es obligatorio.
+    expect(markRefundExecutedSchema.safeParse({}).success).toBe(false);
+    expect(markRefundExecutedSchema.safeParse({ result: 'REFUNDED' }).success).toBe(false);
+  });
+
+  it('solo acepta los tres resultados de la API', () => {
+    expect(markRefundExecutedSchema.safeParse({ outcome: 'PARTIALLY_REFUNDED' }).success).toBe(true);
+    expect(markRefundExecutedSchema.safeParse({ outcome: 'DEVUELTO' }).success).toBe(false);
   });
 
   it('validates refundListQuerySchema defaults', () => {
@@ -518,20 +566,23 @@ describe('refund schemas', () => {
     expect(parsed.refund_status).toBeUndefined();
   });
 
+  // El filtro se llama `status`: es lo que lee el backend y lo que manda la
+  // pantalla. El `refund_status` que se probaba aquí no existía en la API.
   it('validates refundListQuerySchema with status filter and coerced page', () => {
     const parsed = refundListQuerySchema.parse({
-      refund_status: RefundStatus.REFUND_PENDING,
+      status: RefundStatus.REFUND_PENDING,
       page: '3',
       page_size: '10',
     });
-    expect(parsed.refund_status).toBe('REFUND_PENDING');
+    expect(parsed.status).toBe('REFUND_PENDING');
     expect(parsed.page).toBe(3);
     expect(parsed.page_size).toBe(10);
   });
 
-  it('rejects refundListQuerySchema with invalid status', () => {
-    const result = refundListQuerySchema.safeParse({ refund_status: 'INVALID_STATUS' });
-    expect(result.success).toBe(false);
+  it('accepts the calendar day the date pickers send', () => {
+    const parsed = refundListQuerySchema.parse({ from: '2026-08-01', to: '2026-08-11' });
+    expect(parsed.from).toBe('2026-08-01');
+    expect(parsed.to).toBe('2026-08-11');
   });
 
   it('validates refundListQuerySchema with datetime range filters', () => {
@@ -687,5 +738,65 @@ describe('createCorporateOrderSchema — destino de entrega', () => {
       recurrence_periodicity: RecurrencePeriodicity.WEEKLY,
     });
     expect(result.success).toBe(false);
+  });
+});
+
+/**
+ * Estos casos fijan divergencias reales entre lo que shared declaraba y lo que
+ * la API acepta. Todas se encontraron comparando esquema contra endpoint el
+ * 2026-08-12, y una de ellas (el `reason` de Vista de Control) llegó a romper
+ * tres tests del backend al conectarla.
+ *
+ * La regla que fijan: **el contrato describe lo que la API acepta**. Una
+ * pantalla puede exigir más que la API; el esquema compartido, nunca.
+ */
+describe('el contrato refleja lo que la API acepta, no lo que la UI exige', () => {
+  it('registro: nombre y documento son opcionales, aunque el formulario los pida', () => {
+    const parsed = registerBuyerSchema.parse({
+      client_slug: 'piloto',
+      email: 'buyer@test.com',
+      password: 'Password1!',
+    });
+    expect(parsed.full_name).toBeUndefined();
+    expect(parsed.document_number).toBeUndefined();
+  });
+
+  it('registro: `document_type` admite hasta 20 caracteres, no 10', () => {
+    const result = registerBuyerSchema.safeParse({
+      client_slug: 'piloto',
+      email: 'buyer@test.com',
+      password: 'Password1!',
+      document_type: 'CEDULA_EXTRANJERIA',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('invitado: solo el slug es obligatorio', () => {
+    const parsed = guestBuyerSchema.parse({ client_slug: 'piloto' });
+    expect(parsed.phone).toBeUndefined();
+  });
+
+  it('Vista de Control: `reason` es opcional', () => {
+    // Declararlo obligatorio devolvía 400 en el endpoint real.
+    const parsed = controlViewEnterSchema.parse({
+      target_client_id: 7,
+      master_password: 'master123',
+    });
+    expect(parsed.reason).toBeUndefined();
+  });
+
+  it('perfil del comprador: solo nombre y teléfono', () => {
+    // Declaraba también document_type, document_number y default_address, que
+    // el endpoint descarta en silencio.
+    const parsed = updateBuyerProfileSchema.parse({
+      full_name: 'Ana',
+      document_number: '123',
+    } as Record<string, unknown>);
+    expect(parsed).toEqual({ full_name: 'Ana' });
+  });
+
+  it('perfil del comprador: recorta espacios en vez de guardar un nombre en blanco', () => {
+    expect(updateBuyerProfileSchema.safeParse({ full_name: '   ' }).success).toBe(false);
+    expect(updateBuyerProfileSchema.parse({ full_name: '  Ana  ' }).full_name).toBe('Ana');
   });
 });

@@ -205,6 +205,9 @@ model courier_profiles {
   transport_method String?
   vehicle_plate    String?
   additional_data  Json?
+  last_latitude    Decimal?  @db.Decimal(10, 7)
+  last_longitude   Decimal?  @db.Decimal(10, 7)
+  last_location_at DateTime? @db.Timestamptz(6)
   created_at       DateTime @default(now()) @db.Timestamptz(6)
   updated_at       DateTime @default(now()) @db.Timestamptz(6)
   users            users    @relation(fields: [user_id, client_id], references: [id, client_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cp_user")
@@ -374,6 +377,7 @@ model orders {
   delivery_address_longitude                    Decimal?                  @db.Decimal(10, 7)
   delivery_instructions                         String?
   pickup_point_id                               BigInt?
+  scheduled_delivery_date                       DateTime?                 @db.Date
   subtotal                                      Decimal                   @default(0) @db.Decimal(12, 2)
   tax                                           Decimal                   @default(0) @db.Decimal(12, 2)
   shipping_fee                                  Decimal                   @default(0) @db.Decimal(12, 2)
@@ -407,6 +411,7 @@ model orders {
   @@index([client_id, delivery_type], map: "idx_orders_client_delivery_type")
   @@index([client_id, order_origin], map: "idx_orders_client_origin")
   @@index([client_id, payment_status], map: "idx_orders_client_payment_status")
+  @@index([client_id, scheduled_delivery_date], map: "idx_orders_client_scheduled_delivery")
   @@index([client_id, order_status], map: "idx_orders_client_status")
   @@schema("ruta")
 }
