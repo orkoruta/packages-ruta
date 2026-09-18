@@ -42,6 +42,23 @@ export const guestBuyerSchema = z.object({
   phone: z.string().min(1).max(50).optional(),
 });
 
+/**
+ * Convertir una sesión de invitado en cuenta ("reclamar la cuenta").
+ *
+ * No lleva `client_slug`: el Cliente sale de la sesión del invitado que hace la
+ * llamada. Pedirlo por el cuerpo permitiría intentar mover un invitado a otro
+ * tenant, que es justo lo que el aislamiento multi-tenant no debe consentir.
+ *
+ * La contraseña usa el mismo mínimo que el registro (8) para que reclamar no
+ * sea una puerta trasera con requisitos más flojos.
+ */
+export const claimAccountSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  full_name: z.string().min(1).max(200).optional(),
+  phone: z.string().min(1).max(50).optional(),
+});
+
 export const loginSchema = z.object({
   client_slug: z.string().min(1),
   email: z.string().email(),
