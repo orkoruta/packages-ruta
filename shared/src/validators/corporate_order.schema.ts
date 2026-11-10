@@ -11,9 +11,39 @@ const corporateContactSchema = z.object({
 
 // ── Ítem de pedido ────────────────────────────────────────────────────────────
 
-const corporateOrderItemSchema = z.object({
-  product_id: z.number().int().positive(),
-  quantity: z.number().int().positive(),
+/**
+ * Una línea es un producto del catálogo **o** una línea libre.
+ *
+ * La libre existe porque cada restaurante pide algo distinto (cortes, grados de
+ * maduración, presentaciones que no están en el catálogo) y obligar a crear un
+ * producto por pedido no es realista. Lleva su descripción y su precio, y en
+ * `order_items` queda con `product_id = NULL` y la descripción como nombre.
+ */
+const corporateOrderItemSchema = z
+  .object({
+    product_id: z.number().int().positive().optional(),
+    description: z.string().trim().min(1).max(300).optional(),
+    unit_price: z.number().min(0).optional(),
+    quantity: z.number().int().positive(),
+  })
+  .refine(
+    (item) =>
+      item.product_id !== undefined ||
+      (item.description !== undefined && item.unit_price !== undefined),
+    { message: 'Cada ítem necesita un producto, o una descripción con su precio' },
+  )
+  .refine((item) => !(item.product_id !== undefined && item.description !== undefined), {
+    message: 'Un ítem es un producto del catálogo o una línea libre, no ambos',
+  });
+
+/**
+ * Comprador nuevo creado por el staff al registrar el pedido (el que llama por
+ * teléfono o escribe por WhatsApp y nunca usó la tienda). Queda como comprador
+ * sin contraseña, igual que un invitado; podrá reclamar su cuenta después.
+ */
+const newBuyerSchema = z.object({
+  full_name: z.string().trim().min(1, 'El nombre del comprador es requerido').max(200),
+  phone: z.string().trim().min(1, 'El celular del comprador es requerido').max(30),
 });
 
 // ── Destino de entrega ────────────────────────────────────────────────────────
@@ -36,6 +66,13 @@ const corporateDeliveryAddressSchema = z.object({
 /** Base sin refinamientos, para poder extenderla (el recurrente la reusa). */
 const corporateOrderBaseSchema = z.object({
   buyer_id: z.number().int().positive().optional(),
+  /** Alternativa a `buyer_id`: crea el comprador en el momento. */
+  new_buyer: newBuyerSchema.optional(),
+  /**
+   * `CORPORATE` (restaurantes, negocios) o `INDIVIDUAL` (pedido al detal que
+   * el staff toma por teléfono). Ambos los registra el staff del Cliente.
+   */
+  buyer_type: z.enum(['CORPORATE', 'INDIVIDUAL']).default('CORPORATE'),
   corporate_contact: corporateContactSchema,
   items: z.array(corporateOrderItemSchema).min(1, 'Se requiere al menos un ítem'),
   delivery_type: z.enum(['SHIP', 'PICKUP']),
@@ -48,9 +85,24 @@ const corporateOrderBaseSchema = z.object({
 
 /** El destino depende de la rama de entrega: dirección en SHIP, punto en PICKUP. */
 function assertDeliveryTarget(
-  data: { delivery_type: 'SHIP' | 'PICKUP'; delivery_address?: unknown; pickup_point_id?: number },
+  data: {
+    delivery_type: 'SHIP' | 'PICKUP';
+    delivery_address?: unknown;
+    pickup_point_id?: number;
+    buyer_id?: number;
+    new_buyer?: unknown;
+  },
   ctx: z.RefinementCtx,
 ): void {
+  // La falta de comprador la rechaza el servicio (422 VALIDATION_ERROR), que es
+  // el contrato publicado; aquí solo se impide mandar los dos a la vez.
+  if (data.buyer_id && data.new_buyer) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['new_buyer'],
+      message: 'Elige un comprador existente o uno nuevo, no ambos',
+    });
+  }
   if (data.delivery_type === 'SHIP' && !data.delivery_address) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
