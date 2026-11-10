@@ -1,9 +1,14 @@
 name: Publish Packages
 
+# Solo a mano (pestaña Actions → Publish Packages → Run workflow).
+#
+# Se ejecutaba en cada push a main y fallaba siempre con 403 write_package: el
+# GITHUB_TOKEN de este repo no tiene permiso de escritura sobre los paquetes
+# @orkoruta. Hoy ningún consumidor los baja del registro (backend y frontend
+# usan packages-ruta por `link:`) y la publicación se hace a mano con un PAT
+# (ver CLAUDE.md §10). En push solo pintaba de rojo cada commit.
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   publish:
