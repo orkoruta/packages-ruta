@@ -19,7 +19,7 @@ const corporateContactSchema = z.object({
  * producto por pedido no es realista. Lleva su descripción y su precio, y en
  * `order_items` queda con `product_id = NULL` y la descripción como nombre.
  */
-const corporateOrderItemSchema = z
+export const orderItemInputSchema = z
   .object({
     product_id: z.number().int().positive().optional(),
     description: z.string().trim().min(1).max(300).optional(),
@@ -74,7 +74,7 @@ const corporateOrderBaseSchema = z.object({
    */
   buyer_type: z.enum(['CORPORATE', 'INDIVIDUAL']).default('CORPORATE'),
   corporate_contact: corporateContactSchema,
-  items: z.array(corporateOrderItemSchema).min(1, 'Se requiere al menos un ítem'),
+  items: z.array(orderItemInputSchema).min(1, 'Se requiere al menos un ítem'),
   delivery_type: z.enum(['SHIP', 'PICKUP']),
   delivery_address: corporateDeliveryAddressSchema.optional(),
   pickup_point_id: z.number().int().positive().optional(),
@@ -153,3 +153,18 @@ export const repeatLastCorporateOrderSchema = z.object({
 export type CreateCorporateOrderInput = z.infer<typeof createCorporateOrderSchema>;
 export type CreateCorporateOrderRecurringInput = z.infer<typeof createCorporateOrderRecurringSchema>;
 export type RepeatLastCorporateOrderInput = z.infer<typeof repeatLastCorporateOrderSchema>;
+
+// ── Schema: editar los productos de un pedido ya creado ──────────────────────
+
+/**
+ * Lista completa de ítems que reemplaza a la actual (no es un diff): lo que no
+ * venga aquí se quita del pedido. Mismas formas que al crearlo: producto del
+ * catálogo o línea libre con descripción y precio.
+ */
+export const updateOrderItemsSchema = z.object({
+  items: z.array(orderItemInputSchema).min(1, 'El pedido necesita al menos un producto'),
+  reason: z.string().trim().max(300).optional(),
+});
+
+export type OrderItemInput = z.infer<typeof orderItemInputSchema>;
+export type UpdateOrderItemsInput = z.infer<typeof updateOrderItemsSchema>;
